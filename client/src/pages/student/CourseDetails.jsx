@@ -17,7 +17,7 @@ const CourseDetails = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(`${backendUrl}/api/course/${courseId}`);
-      setCourseData(data.course);
+      setCourseData(data.courseData);
 
       // If educator info exists, fetch separately
       if (data.course?.educator?._id) {
