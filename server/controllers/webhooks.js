@@ -9,62 +9,53 @@ import Course from "../models/Course.js";
 // API Controller Function to Manage Clerk User with database
 export const clerkWebhooks = async (req, res) => {
   try {
+    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
-    // Create a Svix instance with clerk webhook secret.
-    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
-
-    // Verifying Headers
-    await whook.verify(JSON.stringify(req.body), {
+    // verify raw body
+    await whook.verify(req.body, {
       "svix-id": req.headers["svix-id"],
       "svix-timestamp": req.headers["svix-timestamp"],
       "svix-signature": req.headers["svix-signature"]
-    })
+    });
 
-    // Getting Data from request body
-    const { data, type } = req.body
+    // parse raw buffer
+    const { data, type } = JSON.parse(req.body.toString());
 
-    // Switch Cases for differernt Events
-    switch (type) {
-      case 'user.created': {
-
+    switch(type) {
+      case 'user.created':
         const userData = {
           _id: data.id,
           email: data.email_addresses[0].email_address,
           name: data.first_name + " " + data.last_name,
-          imageUrl: data.image_url,
-          resume: ''
-        }
-        await User.create(userData)
-        req.auth = { userId: userData._id };
-        res.json({})
+          imageUrl: data.image_url || "",
+          enrolledCourses: [],
+        };
+        await User.create(userData);
         break;
-      }
 
-      case 'user.updated': {
-        const userData = {
+      case 'user.updated':
+        await User.findByIdAndUpdate(data.id, {
           email: data.email_addresses[0].email_address,
           name: data.first_name + " " + data.last_name,
-          imageUrl: data.image_url,
-        }
-        await User.findByIdAndUpdate(data.id, userData)
-        req.auth = { userId: userData._id };
-        res.json({})
+          imageUrl: data.image_url || ""
+        });
         break;
-      }
 
-      case 'user.deleted': {
-        await User.findByIdAndDelete(data.id)
-        res.json({})
+      case 'user.deleted':
+        await User.findByIdAndDelete(data.id);
         break;
-      }
+
       default:
         break;
     }
 
-  } catch (error) {
-    res.json({ success: false, message: error.message })
+    res.status(200).send({});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
   }
 }
+
 
 
 // Stripe Gateway Initialize
