@@ -5,7 +5,7 @@ export const protectEducator = async (req,res,next) => {
 
     try {
 
-        const userId = req.auth.userId
+        const userId = req.user._id;
         
         const response = await clerkClient.users.getUser(userId)
 

@@ -103,7 +103,7 @@ const AddCourse = () => {
 
       const courseData = {
         courseTitle,
-        courseDescription: quillRef.current?.root.innerHTML || '',
+        courseDescription: quillRef.current?.root.textContent || '',
         coursePrice: Number(coursePrice),
         discount: Number(discount),
         courseContent: chapters,

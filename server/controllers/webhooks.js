@@ -35,6 +35,7 @@ export const clerkWebhooks = async (req, res) => {
           resume: ''
         }
         await User.create(userData)
+        req.auth = { userId: userData._id };
         res.json({})
         break;
       }
@@ -46,6 +47,7 @@ export const clerkWebhooks = async (req, res) => {
           imageUrl: data.image_url,
         }
         await User.findByIdAndUpdate(data.id, userData)
+        req.auth = { userId: userData._id };
         res.json({})
         break;
       }
