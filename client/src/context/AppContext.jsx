@@ -157,7 +157,7 @@ const fetchUserEnrolledCourses = async () => {
             setTimeout(() => {
                 fetchUserData()
                 fetchUserEnrolledCourses()
-            }, 1000);
+            }, 2000);
         }
     }, [user])
 

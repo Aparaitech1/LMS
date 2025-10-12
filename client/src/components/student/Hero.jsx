@@ -113,19 +113,6 @@ const Hero = () => {
               </motion.p>
             </motion.div>
 
-            {/* Search Bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              className="max-w-2xl w-full mx-auto lg:mx-0"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl blur-lg"></div>
-                <SearchBar />
-              </div>
-            </motion.div>
-
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}

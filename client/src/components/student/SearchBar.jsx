@@ -25,7 +25,7 @@ const SearchBar = ({ data }) => {
         value={input} 
         type="text" 
         className="flex-1 h-full outline-none text-gray-700 placeholder-gray-400 text-sm md:text-base bg-transparent"
-        placeholder="Search for courses, topics, or instructors..." 
+        placeholder="Search for courses..." 
       />
       <button 
         type='submit' 
