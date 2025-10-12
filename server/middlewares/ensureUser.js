@@ -4,8 +4,6 @@ import User from "../models/User.js";
 export const ensureUser = async (req, res, next) => {
   try {
     const userId = req.auth.userId;
-    // console.log(userId);
-    
 
     if (!userId) {
       return res.status(401).json({ success: false, message: "User not authenticated" });
