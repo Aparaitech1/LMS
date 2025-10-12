@@ -340,18 +340,34 @@ const CoursesSection = () => {
           </motion.div>
         </div>
 
-        {/* Courses Grid */}
+        {/* Courses Grid - IMPROVED SECTION */}
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="mb-12 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Featured <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Courses</span>
+          </h3>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Hand-picked courses to kickstart your development journey
+          </p>
+        </motion.div>
+
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
         >
-          {allCourses.slice(0, 4).map((course, index) => (
+          {allCourses.slice(0, 8).map((course, index) => (
             <motion.div
               key={course.id || index}
               variants={itemVariants}
+              className="flex"
               whileHover={{
                 y: -8,
                 scale: 1.02,
@@ -362,6 +378,35 @@ const CoursesSection = () => {
             </motion.div>
           ))}
         </motion.div>
+
+        {/* View All Courses Button */}
+        {allCourses.length > 8 && (
+          <motion.div 
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            <Link to="/course-list">
+              <motion.button
+                className="group relative bg-transparent border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 overflow-hidden"
+                whileHover={{ 
+                  scale: 1.05,
+                  y: -2
+                }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  View All Courses
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </span>
+              </motion.button>
+            </Link>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
