@@ -55,7 +55,7 @@ export const AppContextProvider = (props) => {
             }
 
             const token = await getToken();
-
+            
             const { data } = await axios.get(backendUrl + '/api/user/data',
                 { headers: { Authorization: `Bearer ${token}` } })
 
@@ -154,8 +154,10 @@ const fetchUserEnrolledCourses = async () => {
     // Fetch User's Data if User is Logged In
     useEffect(() => {
         if (user) {
-            fetchUserData()
-            fetchUserEnrolledCourses()
+            setTimeout(() => {
+                fetchUserData()
+                fetchUserEnrolledCourses()
+            }, 1000);
         }
     }, [user])
 
