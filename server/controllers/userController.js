@@ -5,7 +5,6 @@ import User from "../models/User.js"
 import stripe from "stripe"
 
 
-
 // Get User Data
 export const getUserData = async (req, res) => {
     try {
