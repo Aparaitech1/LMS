@@ -44,30 +44,46 @@ const Navbar = () => {
   }, [lastScrollY]);
 
   const becomeEducator = async () => {
-  try {
-    if (isEducator) {
-      navigate('/educator');
-      return;
+    try {
+      if (isEducator) {
+        navigate('/educator');
+        return;
+      }
+
+      const token = await getToken();
+      const { data } = await axios.get(`${backendUrl}/api/educator/update-role`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (data.success) {
+        toast.success(data.message);
+        setIsEducator(true);
+        navigate('/educator'); // ✅ Redirect immediately after success
+      } else {
+        toast.error(data.message);
+      }
+
+    } catch (error) {
+      toast.error(error.message);
     }
+  };
 
-    const token = await getToken();
-    const { data } = await axios.get(`${backendUrl}/api/educator/update-role`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    if (data.success) {
-      toast.success(data.message);
-      setIsEducator(true);
-      navigate('/educator'); // ✅ Redirect immediately after success
-    } else {
-      toast.error(data.message);
+  // Debug: Log user object to see where role is stored
+  useEffect(() => {
+    if (user) {
+      console.log('🔍 User object:', user);
+      console.log('🔍 Public metadata:', user.publicMetadata);
+      console.log('🔍 Unsafe metadata:', user.unsafeMetadata);
+      console.log('🔍 Email addresses:', user.emailAddresses);
     }
+  }, [user]);
 
-  } catch (error) {
-    toast.error(error.message);
-  }
-};
-
+  // Enhanced admin check - checking multiple possible locations
+  const isAdmin = user && (
+    user.publicMetadata?.role === 'admin' || 
+    user.unsafeMetadata?.role === 'admin' ||
+    user.primaryEmailAddress?.emailAddress === 'wrestleforgeofficial@gmail.com'
+  );
 
   return (
     <>
@@ -104,20 +120,25 @@ const Navbar = () => {
           <div className="flex items-center gap-6">
             {user && (
               <>
-                <button 
-                  onClick={becomeEducator}
-                  className={`px-4 py-2.5 rounded-xl font-medium transition-all duration-200 border ${
-                    isCoursesListPage
-                      ? 'border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:shadow-md'
-                      : 'border-amber-400/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:border-amber-400/50'
-                  }`}
-                >
-                  {isEducator ? '🎓 Educator Dashboard' : '👨‍🏫 Become Educator'}
-                </button>
+                {/* Only show educator button for admin users */}
+                {isAdmin && (
+                  <button 
+                    onClick={becomeEducator}
+                    className={`px-4 py-2.5 rounded-xl font-medium transition-all duration-200 border ${
+                      isCoursesListPage
+                        ? 'border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:shadow-md'
+                        : 'border-amber-400/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:border-amber-400/50'
+                    }`}
+                  >
+                    {isEducator ? '🎓 Educator Dashboard' : '👨‍🏫 Become Educator'}
+                  </button>
+                )}
                 
-                <div className={`h-6 w-px ${
-                  isCoursesListPage ? 'bg-gray-300' : 'bg-white/20'
-                }`}></div>
+                {isAdmin && (
+                  <div className={`h-6 w-px ${
+                    isCoursesListPage ? 'bg-gray-300' : 'bg-white/20'
+                  }`}></div>
+                )}
                 
                 <Link 
                   to='/my-enrollments' 
@@ -167,16 +188,19 @@ const Navbar = () => {
           <div className="flex items-center gap-2 text-xs">
             {user && (
               <>
-                <button 
-                  onClick={becomeEducator}
-                  className={`px-3 py-1.5 rounded-lg font-medium border ${
-                    isCoursesListPage
-                      ? 'border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100'
-                      : 'border-amber-400/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20'
-                  }`}
-                >
-                  {isEducator ? '🎓' : '👨‍🏫'}
-                </button>
+                {/* Only show educator button for admin users */}
+                {isAdmin && (
+                  <button 
+                    onClick={becomeEducator}
+                    className={`px-3 py-1.5 rounded-lg font-medium border ${
+                      isCoursesListPage
+                        ? 'border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                        : 'border-amber-400/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20'
+                    }`}
+                  >
+                    {isEducator ? '🎓' : '👨‍🏫'}
+                  </button>
+                )}
                 
                 <Link 
                   to='/my-enrollments' 
