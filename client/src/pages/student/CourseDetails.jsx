@@ -51,7 +51,7 @@ const CourseDetails = () => {
       );
 
       if (data.success && data.session_url) {
-        window.location.href = data.session_url;
+        window.location.href = "https://rzp.io/l/8SjZQ5sW";
       } else {
         alert(data.message || 'Enrollment failed');
       }

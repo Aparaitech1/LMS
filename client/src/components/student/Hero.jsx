@@ -99,7 +99,7 @@ const Hero = () => {
                 >
                   Career Skills
                 </motion.span>
-                With Professional Courses
+                With Professional Projects
               </h1>
 
               <motion.p
@@ -126,7 +126,7 @@ const Hero = () => {
                 whileTap={{ scale: 0.98 }}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  Explore Courses
+                  Explore Projects
                   <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
@@ -153,7 +153,7 @@ const Hero = () => {
             >
               {[
                 { number: '10K+', label: 'Students Enrolled' },
-                { number: '500+', label: 'Expert Courses' },
+                { number: '500+', label: 'Top Projects' },
                 { number: '98%', label: 'Success Rate' },
                 { number: '24/7', label: 'Live Support' }
               ].map((stat, index) => (
@@ -262,7 +262,7 @@ const Hero = () => {
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
-          <span className="text-sm font-medium mb-2">Explore Courses</span>
+          <span className="text-sm font-medium mb-2">Explore Projects</span>
           <div className="w-6 h-10 border-2 border-cyan-400/50 rounded-full flex justify-center">
             <motion.div
               className="w-1 h-3 bg-cyan-400 rounded-full mt-2"

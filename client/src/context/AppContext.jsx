@@ -11,17 +11,15 @@ export const AppContextProvider = (props) => {
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL
     // console.log(backendUrl);
-    
+
     const currency = import.meta.env.VITE_CURRENCY
 
     const navigate = useNavigate()
     const { getToken } = useAuth()
     const { user } = useUser()
-    // console.log(user);
-    
 
     const [showLogin, setShowLogin] = useState(false)
-    const [isEducator,setIsEducator] = useState(false)
+    const [isEducator, setIsEducator] = useState(false)
     const [allCourses, setAllCourses] = useState([])
     const [userData, setUserData] = useState(null)
     const [enrolledCourses, setEnrolledCourses] = useState([])
@@ -54,8 +52,9 @@ export const AppContextProvider = (props) => {
                 setIsEducator(true)
             }
 
+            // const token = await getToken();
             const token = await getToken();
-            
+
             const { data } = await axios.get(backendUrl + '/api/user/data',
                 { headers: { Authorization: `Bearer ${token}` } })
 
@@ -73,28 +72,29 @@ export const AppContextProvider = (props) => {
 
     // Fetch User Enrolled Courses
     // Fetch User Enrolled Courses
-const fetchUserEnrolledCourses = async () => {
-    try {
-        const token = await getToken();
+    const fetchUserEnrolledCourses = async () => {
+        try {
+            // const token = await getToken();
+            const token = await getToken();
 
-        const { data } = await axios.get(`${backendUrl}/api/user/enrolled-courses`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+            const { data } = await axios.get(`${backendUrl}/api/user/enrolled-courses`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-        if (data.success) {
-            // Ensure enrolledCourses is always an array
-            const courses = Array.isArray(data.enrolledCourses) ? data.enrolledCourses : [];
-            setEnrolledCourses(courses.reverse());
-        } else {
+            if (data.success) {
+                // Ensure enrolledCourses is always an array
+                const courses = Array.isArray(data.enrolledCourses) ? data.enrolledCourses : [];
+                setEnrolledCourses(courses.reverse());
+            } else {
+                setEnrolledCourses([]); // fallback
+                toast.error(data.message);
+            }
+
+        } catch (error) {
             setEnrolledCourses([]); // fallback
-            toast.error(data.message);
+            toast.error(error.message);
         }
-
-    } catch (error) {
-        setEnrolledCourses([]); // fallback
-        toast.error(error.message);
-    }
-};
+    };
 
 
     // Function to Calculate Course Chapter Time
@@ -154,10 +154,8 @@ const fetchUserEnrolledCourses = async () => {
     // Fetch User's Data if User is Logged In
     useEffect(() => {
         if (user) {
-            setTimeout(() => {
-                fetchUserData()
-                fetchUserEnrolledCourses()
-            }, 1000);
+            fetchUserData()
+            fetchUserEnrolledCourses()
         }
     }, [user])
 
@@ -169,7 +167,7 @@ const fetchUserEnrolledCourses = async () => {
         enrolledCourses, fetchUserEnrolledCourses,
         calculateChapterTime, calculateCourseDuration,
         calculateRating, calculateNoOfLectures,
-        isEducator,setIsEducator
+        isEducator, setIsEducator
     }
 
     return (

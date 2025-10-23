@@ -349,7 +349,7 @@ const CoursesSection = () => {
           viewport={{ once: true }}
         >
           <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Featured <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Courses</span>
+            Featured <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Projects</span>
           </h3>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Hand-picked courses to kickstart your development journey

@@ -67,11 +67,6 @@ const CourseCard = ({ course }) => {
                         </div>
                     )}
 
-                    {/* Category Badge */}
-                    <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full border border-white/20">
-                        {courseCategory}
-                    </div>
-
                     {/* Level Badge */}
                     <div className={`absolute bottom-2 left-2 text-xs font-semibold px-2 py-1 rounded-full ${
                         courseLevel === 'Beginner' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :

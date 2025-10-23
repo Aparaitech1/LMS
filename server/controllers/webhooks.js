@@ -21,7 +21,7 @@ export const clerkWebhooks = async (req, res) => {
     // parse raw buffer
     const { data, type } = JSON.parse(req.body.toString());
 
-    switch(type) {
+    switch (type) {
       case 'user.created':
         const userData = {
           _id: data.id,

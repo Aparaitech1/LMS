@@ -75,7 +75,7 @@ const Navbar = () => {
       <nav 
         className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 backdrop-blur-md border-b transition-all duration-300 ${
           isCoursesListPage 
-            ? 'bg-white/95 border-gray-200 shadow-sm' 
+            ? 'bg-gradient-to-b from-gray-900/95 via-blue-900/90 to-indigo-900/90 border-white/10' 
             : 'bg-gradient-to-b from-gray-900/95 via-blue-900/90 to-indigo-900/90 border-white/10'
         }`}
         style={{
@@ -95,9 +95,7 @@ const Navbar = () => {
               alt="Website Logo" 
               className="w-20 h-16 rounded-xl transition-transform group-hover:scale-105"
             />
-            {!isCoursesListPage && (
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl blur opacity-30 -z-10"></div>
-            )}
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl blur opacity-30 -z-10"></div>
           </div>
         </div>
 
@@ -125,7 +123,7 @@ const Navbar = () => {
                   to='/my-enrollments' 
                   className={`font-medium transition-colors duration-200 ${
                     isCoursesListPage
-                      ? 'text-gray-700 hover:text-blue-600'
+                      ? 'text-gray-300 hover:text-blue-600'
                       : 'text-gray-300 hover:text-white'
                   }`}
                 >
@@ -138,7 +136,7 @@ const Navbar = () => {
           {user ? (
             <div className={`p-1.5 rounded-xl border ${
               isCoursesListPage 
-                ? 'border-gray-200 bg-white' 
+                ? 'border-white/30 bg-white/5' 
                 : 'border-white/10 bg-white/5'
             }`}>
               <UserButton 
@@ -197,7 +195,7 @@ const Navbar = () => {
           {user ? (
             <div className={`p-1 rounded-lg border ${
               isCoursesListPage 
-                ? 'border-gray-200 bg-white' 
+                ? '' 
                 : 'border-white/10 bg-white/5'
             }`}>
               <UserButton 
@@ -215,7 +213,7 @@ const Navbar = () => {
               className={`p-2 rounded-lg transition-colors ${
                 isCoursesListPage
                   ? 'bg-blue-500 text-white hover:bg-blue-600'
-                  : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
+                  : ''
               }`}
             >
               <img src={assets.user_icon} alt="User" className="w-5 h-5" />
