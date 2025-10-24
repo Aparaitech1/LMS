@@ -68,13 +68,13 @@ const CourseCard = ({ course }) => {
                     )}
 
                     {/* Level Badge */}
-                    <div className={`absolute bottom-2 left-2 text-xs font-semibold px-2 py-1 rounded-full ${
+                    {/* <div className={`absolute bottom-2 left-2 text-xs font-semibold px-2 py-1 rounded-full ${
                         courseLevel === 'Beginner' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
                         courseLevel === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
                         'bg-red-500/20 text-red-300 border border-red-500/30'
                     }`}>
                         {courseLevel}
-                    </div>
+                    </div> */}
 
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-transparent opacity-60" />
@@ -97,7 +97,7 @@ const CourseCard = ({ course }) => {
 
                     {/* Rating Section */}
                     <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-1">
+                        {/* <div className="flex items-center gap-1">
                             <div className="flex items-center gap-1">
                                 <div className="flex">
                                     {[...Array(5)].map((_, i) => (
@@ -115,7 +115,7 @@ const CourseCard = ({ course }) => {
                                 <span className="text-cyan-400 font-semibold text-xs ml-1">{rating.toFixed(1)}</span>
                             </div>
                             <span className="text-gray-500 text-xs">({courseRatingsCount})</span>
-                        </div>
+                        </div> */}
 
                         {/* Duration if available */}
                         {course?.duration && (
@@ -162,11 +162,11 @@ const CourseCard = ({ course }) => {
                                         </span>
                                     )}
                                 </div>
-                                {isDiscounted && (
+                                {/* {isDiscounted && (
                                     <span className="text-green-400 text-xs font-medium mt-0.5">
                                         Save {currency}{(coursePrice - finalPrice).toFixed(2)}
                                     </span>
-                                )}
+                                )} */}
                             </div>
                         </div>
 

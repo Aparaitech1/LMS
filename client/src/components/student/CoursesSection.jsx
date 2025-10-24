@@ -38,7 +38,7 @@ const CoursesSection = () => {
   ];
 
   const stats = [
-    { number: '98%', label: 'Completion Rate' },
+    { number: '100%', label: 'Completion Rate' },
     { number: '24/7', label: 'Mentor Support' },
     { number: '50+', label: 'Real Projects' },
     { number: '1-on-1', label: 'Code Reviews' }
@@ -151,7 +151,7 @@ const CoursesSection = () => {
                   >
                     <h3 className="text-white font-bold text-xl mb-1">Raj Chaturvedi</h3>
                     <p className="text-cyan-300 text-sm mb-2">Senior Full-Stack Developer</p>
-                    <div className="flex items-center gap-2 text-white/80 text-sm">
+                    <div className="flex items-center justify-center gap-2 text-white/80 text-sm">
                       <span>⭐ 4.9 Rating</span>
                       <span>•</span>
                       <span>👨‍🎓 10K+ Students</span>
@@ -257,7 +257,7 @@ const CoursesSection = () => {
                   transition={{ duration: 0.8, delay: 0.7 }}
                   viewport={{ once: true }}
                 >
-                  Join thousands of students who have transformed their careers with our expert-led courses. 
+                  Join thousands of students who have transformed their careers with our expert-led Projects. 
                   Get real-world experience and build projects that matter.
                 </motion.p>
               </div>
@@ -352,7 +352,7 @@ const CoursesSection = () => {
             Featured <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Projects</span>
           </h3>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Hand-picked courses to kickstart your development journey
+            Hand-picked Projects to kickstart your development journey
           </p>
         </motion.div>
 

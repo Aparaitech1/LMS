@@ -117,8 +117,7 @@ const CallToAction = () => {
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.8, delay: 0.8 }}
             >
-              Incididunt sint fugiat pariatur cupidatat consectetur sit cillum anim id veniam aliqua 
-              proident excepteur commodo do ea.
+              Transform your learning journey with industry-leading Projects.
             </motion.p>
           </motion.div>
 
@@ -170,7 +169,7 @@ const CallToAction = () => {
           >
             {[
               { number: '50K+', label: 'Active Learners' },
-              { number: '1K+', label: 'Courses Available' },
+              { number: '1K+', label: 'Projects Available' },
               { number: '99%', label: 'Satisfaction Rate' },
               { number: '24/7', label: 'Learning Access' }
             ].map((stat, index) => (
