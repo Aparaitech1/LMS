@@ -140,7 +140,6 @@ const CourseDetails = () => {
     );
   }
 
-  const rating = calculateRating(courseData) || 0;
   const studentsCount = courseData?.studentsEnrolled?.length || 0;
   const totalVideos = courseData?.modules?.reduce((total, module) => total + (module.videos?.length || 0), 0) || 0;
   const totalResources = courseData?.resources?.length || 0;
@@ -164,6 +163,9 @@ const CourseDetails = () => {
                     alt={courseData?.courseTitle}
                     className="w-full h-96 object-cover transition-opacity duration-500"
                     onLoad={() => setImageLoaded(true)}
+                    style={{ 
+                      imageRendering: 'crisp-edges'
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                   
@@ -184,27 +186,11 @@ const CourseDetails = () => {
                   </h1>
                   
                   <div className="flex flex-wrap items-center gap-4 text-white/90">
-                    {rating > 0 && (
-                      <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                        <div className="flex items-center">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <svg
-                              key={star}
-                              className={`w-4 h-4 ${
-                                star <= Math.floor(rating) ? 'text-amber-300' : 'text-white/40'
-                              }`}
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                          ))}
-                        </div>
-                        <span className="text-sm font-medium">
-                          {rating.toFixed(1)} • {studentsCount} {studentsCount === 1 ? 'student' : 'students'}
-                        </span>
-                      </div>
-                    )}
+                    {/* <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                      <span className="text-sm font-medium">
+                        {studentsCount} {studentsCount === 1 ? 'student' : 'students'}
+                      </span>
+                    </div> */}
                     
                     {courseData?.level && (
                       <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
@@ -230,7 +216,7 @@ const CourseDetails = () => {
                       <p className="font-semibold text-white">
                         {courseData?.educator?.name || educatorData?.name || 'Unknown Educator'}
                       </p>
-                      <p className="text-white/80 text-sm">Course Instructor</p>
+                      <p className="text-white/80 text-sm">Project Instructor</p>
                     </div>
                   </div>
                 </div>
@@ -283,11 +269,11 @@ const CourseDetails = () => {
 
                     {/* Features List */}
                     <div className="space-y-4">
-                      <h4 className="font-semibold text-white text-lg">This course includes:</h4>
+                      <h4 className="font-semibold text-white text-lg">This Project includes:</h4>
                       <div className="space-y-3">
                         {[
-                          { icon: VideoIcon, text: `${totalVideos} video lessons`, color: 'text-blue-300' },
-                          { icon: DownloadIcon, text: `${totalResources} downloadable resources`, color: 'text-green-300' },
+                          // { icon: VideoIcon, text: `${totalVideos} video lessons`, color: 'text-blue-300' },
+                          // { icon: DownloadIcon, text: `${totalResources} downloadable resources`, color: 'text-green-300' },
                           { icon: CertificateIcon, text: 'Certificate of completion', color: 'text-amber-300' },
                           { icon: InfinityIcon, text: 'Full lifetime access', color: 'text-purple-300' },
                         ].map((item, index) => (
@@ -319,7 +305,7 @@ const CourseDetails = () => {
             {/* Tab Navigation - Glassmorphism */}
             <div className="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-lg p-2">
               <nav className="flex space-x-2">
-                {['overview', 'curriculum', 'instructor'].map((tab) => (
+                {['overview', 'instructor'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -329,8 +315,7 @@ const CourseDetails = () => {
                         : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
                     }`}
                   >
-                    {tab === 'overview' && 'Course Overview'}
-                    {tab === 'curriculum' && 'Curriculum'}
+                    {tab === 'overview' && 'Project Overview'}
                     {tab === 'instructor' && 'Instructor'}
                   </button>
                 ))}
@@ -343,7 +328,7 @@ const CourseDetails = () => {
                 <div className="space-y-8 animate-fade-in">
                   {/* Course Description */}
                   <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">About This Course</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">About This Project</h2>
                     <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
                       {courseData?.courseDescription}
                     </p>
@@ -382,78 +367,6 @@ const CourseDetails = () => {
                       </ul>
                     </div>
                   )}
-                </div>
-              )}
-
-              {activeTab === 'curriculum' && (
-                <div className="space-y-6 animate-fade-in">
-                  <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                    <div className="flex items-center justify-between mb-8">
-                      <h2 className="text-2xl font-bold text-gray-900">Course Content</h2>
-                      <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                        {courseData?.modules?.length || 0} modules • {totalVideos} lessons
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      {courseData?.modules?.length > 0 ? (
-                        courseData.modules.map((module, index) => (
-                          <div 
-                            key={index}
-                            className="border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all duration-300 overflow-hidden"
-                          >
-                            <div className="p-6 bg-gray-50 border-b border-gray-200">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <h3 className="font-semibold text-gray-900 text-lg">
-                                    Module {index + 1}: {module.title}
-                                  </h3>
-                                  {module.description && (
-                                    <p className="text-gray-600 mt-2">{module.description}</p>
-                                  )}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {module.videos?.length || 0} lessons
-                                </div>
-                              </div>
-                            </div>
-                            <div className="p-4">
-                              {module.videos?.length > 0 ? (
-                                <div className="space-y-3">
-                                  {module.videos.map((video, videoIndex) => (
-                                    <div 
-                                      key={videoIndex}
-                                      className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors group cursor-pointer"
-                                    >
-                                      <div className="flex items-center gap-4">
-                                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                                          <PlayIcon className="text-blue-600" />
-                                        </div>
-                                        <span className="text-gray-700 group-hover:text-blue-600 transition-colors">
-                                          {video.title}
-                                        </span>
-                                      </div>
-                                      {video.duration && (
-                                        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                          {video.duration}
-                                        </span>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <p className="text-gray-500 text-center py-4">No videos available for this module.</p>
-                              )}
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-12 text-gray-500">
-                          <p className="text-lg">No curriculum available for this course yet.</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
                 </div>
               )}
 
@@ -505,18 +418,20 @@ const CourseDetails = () => {
           <div className="lg:col-span-1 space-y-6">
             {/* Course Stats - Glassmorphism */}
             <div className="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-lg p-6">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg">Course Details</h3>
+              <h3 className="font-bold text-gray-900 mb-4 text-lg">Project Details</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-600">Students enrolled</span>
                   <span className="font-semibold text-gray-900">{studentsCount}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Rating</span>
-                  <span className="font-semibold text-gray-900">
-                    {rating > 0 ? `${rating.toFixed(1)}/5.0` : 'Not rated'}
-                  </span>
+                {/* <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Video lessons</span>
+                  <span className="font-semibold text-gray-900">{totalVideos}</span>
                 </div>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Resources</span>
+                  <span className="font-semibold text-gray-900">{totalResources}</span>
+                </div> */}
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-600">Last updated</span>
                   <span className="font-semibold text-gray-900">

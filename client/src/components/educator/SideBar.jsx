@@ -15,7 +15,7 @@ const SideBar = () => {
   ];
 
   return isEducator && (
-    <div className="relative md:w-64 w-20 min-h-screen overflow-hidden">
+    <div className="relative md:w-64 w-20 h-full overflow-hidden flex-shrink-0">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900">
         {/* Subtle Grid Pattern */}
