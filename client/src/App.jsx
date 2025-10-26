@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { Routes, Route, useLocation, useMatch } from 'react-router-dom'
 import Navbar from './components/student/Navbar'
+import WhatsAppButton from './components/student/WhatsAppButton' // Import the new component
 import Home from './pages/student/Home'
 import CourseDetails from './pages/student/CourseDetails'
 import CoursesList from './pages/student/CoursesList'
@@ -17,7 +18,6 @@ import MyEnrollments from './pages/student/MyEnrollments'
 import Loading from './components/student/Loading'
 
 const App = () => {
-
   const isEducatorRoute = useMatch('/educator/*');
 
   return (
@@ -25,6 +25,10 @@ const App = () => {
       <ToastContainer />
       {/* Render Student Navbar only if not on educator routes */}
       {!isEducatorRoute && <Navbar />}
+      
+      {/* WhatsApp Button - appears on all pages */}
+      <WhatsAppButton />
+      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/course/:courseId" element={<CourseDetails />} />

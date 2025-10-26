@@ -14,6 +14,8 @@ const CourseDetails = () => {
   const [enrolling, setEnrolling] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showPdfModal, setShowPdfModal] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const fetchCourseData = async () => {
     try {
@@ -63,6 +65,46 @@ const CourseDetails = () => {
     }
   };
 
+  const handleDownloadPdf = async () => {
+    if (courseData?.pdfUrl) {
+      try {
+        setPdfLoading(true);
+        
+        // Method 1: Direct download with proper filename
+        const response = await fetch(courseData.pdfUrl);
+        const blob = await response.blob();
+        
+        // Create a download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${courseData.courseTitle.replace(/\s+/g, '_')}_syllabus.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up the URL object
+        window.URL.revokeObjectURL(url);
+        
+        setPdfLoading(false);
+      } catch (error) {
+        console.error('Error downloading PDF:', error);
+        // Fallback: Direct link opening
+        window.open(courseData.pdfUrl, '_blank');
+        setPdfLoading(false);
+      }
+    }
+  };
+
+  const handleViewPdf = () => {
+    setShowPdfModal(true);
+  };
+
+  // Google Docs Viewer URL for PDFs that can't be displayed directly
+  const getPdfViewerUrl = (pdfUrl) => {
+    return `https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
+  };
+
   useEffect(() => {
     fetchCourseData();
   }, [courseId]);
@@ -106,6 +148,30 @@ const CourseDetails = () => {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M13.83 2.83a4 4 0 00-5.66 0l-4 4a4 4 0 000 5.66l4 4a4 4 0 005.66 0l4-4a4 4 0 000-5.66l-4-4z"/>
       <path d="M10.17 21.17a4 4 0 005.66 0l4-4a4 4 0 000-5.66l-4-4a4 4 0 00-5.66 0l-4 4a4 4 0 000 5.66l4 4z"/>
+    </svg>
+  );
+
+  const PdfIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <path d="M16 13H8"/>
+      <path d="M16 17H8"/>
+      <path d="M10 9H8"/>
+    </svg>
+  );
+
+  const EyeIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  );
+
+  const CloseIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
   );
 
@@ -177,6 +243,24 @@ const CourseDetails = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* PDF Buttons - Top Right with Better Visibility */}
+                  {courseData?.pdfUrl && (
+                    <div className="absolute top-4 right-4 flex gap-2 z-20">
+                      <button
+                        onClick={handleDownloadPdf}
+                        disabled={pdfLoading}
+                        className="bg-blue-600/95 backdrop-blur-sm hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-semibold shadow-2xl hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2 group border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {pdfLoading ? (
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <DownloadIcon />
+                        )}
+                        <span>{pdfLoading ? 'Downloading...' : 'Download PDF'}</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Course Title and Info */}
@@ -186,12 +270,6 @@ const CourseDetails = () => {
                   </h1>
                   
                   <div className="flex flex-wrap items-center gap-4 text-white/90">
-                    {/* <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                      <span className="text-sm font-medium">
-                        {studentsCount} {studentsCount === 1 ? 'student' : 'students'}
-                      </span>
-                    </div> */}
-                    
                     {courseData?.level && (
                       <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
                         {courseData.level}
@@ -272,8 +350,6 @@ const CourseDetails = () => {
                       <h4 className="font-semibold text-white text-lg">This Project includes:</h4>
                       <div className="space-y-3">
                         {[
-                          // { icon: VideoIcon, text: `${totalVideos} video lessons`, color: 'text-blue-300' },
-                          // { icon: DownloadIcon, text: `${totalResources} downloadable resources`, color: 'text-green-300' },
                           { icon: CertificateIcon, text: 'Certificate of completion', color: 'text-amber-300' },
                           { icon: InfinityIcon, text: 'Full lifetime access', color: 'text-purple-300' },
                         ].map((item, index) => (
@@ -424,14 +500,6 @@ const CourseDetails = () => {
                   <span className="text-gray-600">Students enrolled</span>
                   <span className="font-semibold text-gray-900">{studentsCount}</span>
                 </div>
-                {/* <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Video lessons</span>
-                  <span className="font-semibold text-gray-900">{totalVideos}</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Resources</span>
-                  <span className="font-semibold text-gray-900">{totalResources}</span>
-                </div> */}
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-600">Last updated</span>
                   <span className="font-semibold text-gray-900">
@@ -442,6 +510,12 @@ const CourseDetails = () => {
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600">Language</span>
                     <span className="font-semibold text-gray-900">{courseData.language}</span>
+                  </div>
+                )}
+                {courseData?.pdfUrl && (
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-gray-600">Syllabus PDF</span>
+                    <span className="font-semibold text-green-600">Available</span>
                   </div>
                 )}
               </div>

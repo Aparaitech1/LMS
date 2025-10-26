@@ -29,6 +29,7 @@ const courseSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    pdfUrl: { type: String },
     courseRatings: [
         {
             userId: { type: String },

@@ -27,39 +27,44 @@ export const updateRoleToEducator = async (req, res) => {
 
 // Add New Course
 export const addCourse = async (req, res) => {
+  try {
+    const { courseData } = req.body;
+    const educatorId = req.auth.userId;
 
-    try {
+    // Parse the incoming course data
+    const parsedCourseData = JSON.parse(courseData);
+    parsedCourseData.educator = educatorId;
 
-        const { courseData } = req.body
+    // Access uploaded files
+    const imageFile = req.files?.image?.[0];
+    const pdfFile = req.files?.pdf?.[0];
 
-        const imageFile = req.file
-
-        const educatorId = req.auth.userId
-
-        if (!imageFile) {
-            return res.json({ success: false, message: 'Thumbnail Not Attached' })
-        }
-
-        const parsedCourseData = await JSON.parse(courseData)
-
-        parsedCourseData.educator = educatorId
-
-        const newCourse = await Course.create(parsedCourseData)
-
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path)
-
-        newCourse.courseThumbnail = imageUpload.secure_url
-
-        await newCourse.save()
-
-        res.json({ success: true, message: 'Course Added' })
-
-    } catch (error) {
-
-        res.json({ success: false, message: error.message })
-
+    // Validate thumbnail
+    if (!imageFile) {
+      return res.json({ success: false, message: 'Thumbnail Not Attached' });
     }
-}
+
+    // Upload the course thumbnail to Cloudinary
+    const imageUpload = await cloudinary.uploader.upload(imageFile.path);
+    parsedCourseData.courseThumbnail = imageUpload.secure_url;
+
+    // Upload the PDF if provided
+    if (pdfFile) {
+      const pdfUpload = await cloudinary.uploader.upload(pdfFile.path, {
+        resource_type: 'raw',
+        folder: 'course_materials',
+      });
+      parsedCourseData.pdfUrl = pdfUpload.secure_url;
+    }
+
+    // Create the new course with uploaded URLs
+    const newCourse = await Course.create(parsedCourseData);
+
+    res.json({ success: true, message: 'Course Added', course: newCourse });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
 
 // Get Educator Courses
 export const getEducatorCourses = async (req, res) => {
