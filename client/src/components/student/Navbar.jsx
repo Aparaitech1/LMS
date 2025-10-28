@@ -68,15 +68,6 @@ const Navbar = () => {
     }
   };
 
-  // Debug: Log user object to see where role is stored
-  useEffect(() => {
-    if (user) {
-      console.log('🔍 User object:', user);
-      console.log('🔍 Public metadata:', user.publicMetadata);
-      console.log('🔍 Unsafe metadata:', user.unsafeMetadata);
-      console.log('🔍 Email addresses:', user.emailAddresses);
-    }
-  }, [user]);
 
   // Enhanced admin check - checking multiple possible locations
   const isAdmin = user && (
