@@ -13,6 +13,11 @@ const CoursesList = () => {
     const { allCourses, navigate } = useContext(AppContext)
     const [filteredCourse, setFilteredCourse] = useState([])
 
+    // Scroll to top when component mounts
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     useEffect(() => {
         if (allCourses && allCourses.length > 0) {
             const tempCourses = allCourses.slice()

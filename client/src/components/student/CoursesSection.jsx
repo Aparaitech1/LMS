@@ -1,11 +1,16 @@
 import React, { useContext } from 'react';
 import { AppContext } from '../../context/AppContext';
 import CourseCard from './CourseCard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const CoursesSection = () => {
   const { allCourses } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const handleStartLearning = () => {
+    navigate('/course-list');
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -320,6 +325,7 @@ const CoursesSection = () => {
                 viewport={{ once: true }}
               >
                 <motion.button
+                  onClick={handleStartLearning}
                   className="group relative bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-4 rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden text-lg w-full sm:w-auto"
                   whileHover={{ 
                     scale: 1.02,

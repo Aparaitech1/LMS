@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 import SearchBar from '../../components/student/SearchBar';
 import { motion, useInView } from 'framer-motion';
@@ -6,6 +7,15 @@ import { motion, useInView } from 'framer-motion';
 const Hero = () => {
   const imageRef = useRef(null);
   const isImageInView = useInView(imageRef, { once: true, threshold: 0.3 });
+  const navigate = useNavigate();
+
+  const handleExploreProjects = () => {
+    navigate('/course-list');
+  };
+
+  const handleStartFreeTrial = () => {
+    navigate('/course-list'); // Or you can change this to '/free-trial' if you have a different route
+  };
 
   return (
     <div className="relative w-full min-h-[80vh] bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 overflow-hidden">
@@ -121,6 +131,7 @@ const Hero = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
               <motion.button
+                onClick={handleExploreProjects}
                 className="group relative bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-4 rounded-xl shadow-2xl transition-all duration-300 overflow-hidden"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -135,6 +146,7 @@ const Hero = () => {
               </motion.button>
 
               <motion.button
+                onClick={handleStartFreeTrial}
                 className="group relative bg-white/10 backdrop-blur-md border-2 border-white/20 hover:border-white/40 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 overflow-hidden"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

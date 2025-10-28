@@ -1,10 +1,16 @@
 import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import { motion, useInView } from "framer-motion";
 
 const Companies = () => {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, threshold: 0.1 });
+  const navigate = useNavigate();
+
+  const handleStartLearning = () => {
+    navigate('/course-list');
+  };
 
   const companies = [
     { logo: assets.microsoft_logo, name: "Microsoft" },
@@ -233,6 +239,7 @@ const Companies = () => {
           transition={{ duration: 0.8, delay: 1.5 }}
         >
           <motion.button
+            onClick={handleStartLearning}
             className="group relative bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-12 py-5 rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden text-lg"
             whileHover={{ 
               scale: 1.02,
@@ -285,4 +292,4 @@ const Companies = () => {
   );
 };
 
-export default Companies; 
+export default Companies;

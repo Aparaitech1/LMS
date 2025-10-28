@@ -1,10 +1,20 @@
 import React, { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 import { motion, useInView } from 'framer-motion';
 
 const CallToAction = () => {
   const ctaRef = useRef(null);
   const isInView = useInView(ctaRef, { once: true, threshold: 0.3 });
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/course-list');
+  };
+
+  const handleLearnMore = () => {
+    navigate('/course-list');
+  };
 
   return (
     <div className="relative w-full min-h-[60vh] bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 overflow-hidden" ref={ctaRef}>
@@ -130,6 +140,7 @@ const CallToAction = () => {
           >
             {/* Primary Button */}
             <motion.button
+              onClick={handleGetStarted}
               className="group relative bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-4 rounded-xl shadow-2xl transition-all duration-300 overflow-hidden"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -145,6 +156,7 @@ const CallToAction = () => {
 
             {/* Secondary Button */}
             <motion.button
+              onClick={handleLearnMore}
               className="group relative bg-white/10 backdrop-blur-md border-2 border-white/20 hover:border-white/40 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 overflow-hidden flex items-center gap-3"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
