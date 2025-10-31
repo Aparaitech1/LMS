@@ -68,7 +68,7 @@ export const purchaseCourse = async (req, res) => {
         }]
 
         const session = await stripeInstance.checkout.sessions.create({
-            success_url: `${origin}/loading/my-enrollments`,
+            success_url: `${process.env.BACKEND_URL}/api/user/payment-success?courseId=${courseId}`,
             cancel_url: `${origin}/`,
             line_items: line_items,
             mode: 'payment',
@@ -202,4 +202,36 @@ export const addUserRating = async (req, res) => {
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }
+};
+
+// After successful payment, add course to user's enrolledCourses
+// Handle Stripe success redirect and enroll the user
+export const paymentSuccess = async (req, res) => {
+  try {
+    const userId = req.auth.userId; // Clerk auth
+    const { courseId } = req.query; // coming from success_url
+
+    if (!courseId) {
+      return res.json({ success: false, message: "Missing courseId in query" });
+    }
+
+    const user = await User.findById(userId);
+    const course = await Course.findById(courseId);
+
+    if (!user || !course) {
+      return res.json({ success: false, message: "User or Course not found" });
+    }
+
+    // Add course if not already enrolled
+    if (!user.enrolledCourses.includes(courseId)) {
+      user.enrolledCourses.push(courseId);
+      await user.save();
+    }
+
+    console.log("✅ Course added to enrolledCourses:", courseId);
+
+    return res.redirect(`${process.env.FRONTEND_URL}/my-enrollments`);
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
 };

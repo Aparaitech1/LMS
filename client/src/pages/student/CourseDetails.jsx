@@ -44,8 +44,25 @@ const CourseDetails = () => {
         return;
       }
 
-      setEnrolling(true);
+      // Check if already enrolled
       const token = await getToken();
+      const enrolledResponse = await axios.get(
+        `${backendUrl}/api/user/enrolled-courses`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const isAlreadyEnrolled = enrolledResponse.data.enrolledCourses?.some(
+        course => course._id === courseId
+      );
+
+      if (isAlreadyEnrolled) {
+        alert('You are already enrolled in this course!');
+        window.location.href = '/my-enrollments';
+        return;
+      }
+
+      setEnrolling(true);
+
       const { data } = await axios.post(
         `${backendUrl}/api/user/purchase`,
         { courseId },
@@ -53,13 +70,15 @@ const CourseDetails = () => {
       );
 
       if (data.success && data.session_url) {
-        window.location.href = "https://rzp.io/l/8SjZQ5sW";
+        // Store course ID in localStorage to check after redirect
+        localStorage.setItem('pendingEnrollment', courseId);
+        window.location.href = data.session_url;
       } else {
-        alert(data.message || 'Enrollment failed');
+        alert(data.message || 'Enrollment failed. Please try again.');
       }
     } catch (error) {
       console.error('Error enrolling:', error);
-      alert(error.message || 'Enrollment error');
+      alert(error.response?.data?.message || 'Enrollment error. Please try again.');
     } finally {
       setEnrolling(false);
     }
@@ -69,11 +88,11 @@ const CourseDetails = () => {
     if (courseData?.pdfUrl) {
       try {
         setPdfLoading(true);
-        
+
         // Method 1: Direct download with proper filename
         const response = await fetch(courseData.pdfUrl);
         const blob = await response.blob();
-        
+
         // Create a download link
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -82,10 +101,10 @@ const CourseDetails = () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         // Clean up the URL object
         window.URL.revokeObjectURL(url);
-        
+
         setPdfLoading(false);
       } catch (error) {
         console.error('Error downloading PDF:', error);
@@ -112,66 +131,66 @@ const CourseDetails = () => {
   // SVG Icons
   const PlayIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-white">
-      <path d="M8 5v14l11-7z"/>
+      <path d="M8 5v14l11-7z" />
     </svg>
   );
 
   const CheckIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 6L9 17l-5-5"/>
+      <path d="M20 6L9 17l-5-5" />
     </svg>
   );
 
   const VideoIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M23 7l-7 5 7 5V7z"/>
-      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+      <path d="M23 7l-7 5 7 5V7z" />
+      <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
     </svg>
   );
 
   const DownloadIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-      <polyline points="7 10 12 15 17 10"/>
-      <line x1="12" y1="15" x2="12" y2="3"/>
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
     </svg>
   );
 
   const CertificateIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="8" r="7"/>
-      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+      <circle cx="12" cy="8" r="7" />
+      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
     </svg>
   );
 
   const InfinityIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M13.83 2.83a4 4 0 00-5.66 0l-4 4a4 4 0 000 5.66l4 4a4 4 0 005.66 0l4-4a4 4 0 000-5.66l-4-4z"/>
-      <path d="M10.17 21.17a4 4 0 005.66 0l4-4a4 4 0 000-5.66l-4-4a4 4 0 00-5.66 0l-4 4a4 4 0 000 5.66l4 4z"/>
+      <path d="M13.83 2.83a4 4 0 00-5.66 0l-4 4a4 4 0 000 5.66l4 4a4 4 0 005.66 0l4-4a4 4 0 000-5.66l-4-4z" />
+      <path d="M10.17 21.17a4 4 0 005.66 0l4-4a4 4 0 000-5.66l-4-4a4 4 0 00-5.66 0l-4 4a4 4 0 000 5.66l4 4z" />
     </svg>
   );
 
   const PdfIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <path d="M16 13H8"/>
-      <path d="M16 17H8"/>
-      <path d="M10 9H8"/>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <path d="M16 13H8" />
+      <path d="M16 17H8" />
+      <path d="M10 9H8" />
     </svg>
   );
 
   const EyeIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-      <circle cx="12" cy="12" r="3"/>
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
     </svg>
   );
 
   const CloseIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <line x1="18" y1="6" x2="6" y2="18"/>
-      <line x1="6" y1="6" x2="18" y2="18"/>
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
 
@@ -195,7 +214,7 @@ const CourseDetails = () => {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Course Not Found</h2>
           <p className="text-gray-600 mb-6">The course you're looking for doesn't exist or has been moved.</p>
-          <button 
+          <button
             onClick={() => window.history.back()}
             className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-105"
           >
@@ -217,24 +236,23 @@ const CourseDetails = () => {
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
+
             {/* Course Thumbnail with Glass Effect */}
             <div className="lg:col-span-2">
               <div className="relative group">
-                <div className={`relative rounded-2xl overflow-hidden shadow-2xl transform group-hover:scale-[1.02] transition-all duration-500 ${
-                  !imageLoaded ? 'bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse' : ''
-                }`}>
+                <div className={`relative rounded-2xl overflow-hidden shadow-2xl transform group-hover:scale-[1.02] transition-all duration-500 ${!imageLoaded ? 'bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse' : ''
+                  }`}>
                   <img
                     src={courseData?.courseThumbnail || assets.placeholder}
                     alt={courseData?.courseTitle}
                     className="w-full h-96 object-cover transition-opacity duration-500"
                     onLoad={() => setImageLoaded(true)}
-                    style={{ 
+                    style={{
                       imageRendering: 'crisp-edges'
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-                  
+
                   {/* Play Button Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 transform group-hover:scale-110 transition-transform duration-300">
@@ -268,14 +286,14 @@ const CourseDetails = () => {
                   <h1 className="text-4xl font-bold text-white leading-tight">
                     {courseData?.courseTitle}
                   </h1>
-                  
+
                   <div className="flex flex-wrap items-center gap-4 text-white/90">
                     {courseData?.level && (
                       <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
                         {courseData.level}
                       </span>
                     )}
-                    
+
                     {courseData?.category && (
                       <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
                         {courseData.category}
@@ -323,7 +341,7 @@ const CourseDetails = () => {
                       </p>
                     )}
                   </div>
-                  
+
                   {/* CTA Section */}
                   <div className="p-6 space-y-6">
                     <button
@@ -340,7 +358,7 @@ const CourseDetails = () => {
                         'Enroll Now'
                       )}
                     </button>
-                    
+
                     <p className="text-center text-white/80 text-sm">
                       💰 30-day money-back guarantee
                     </p>
@@ -375,7 +393,7 @@ const CourseDetails = () => {
       {/* Content Section */}
       <div className="relative -mt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Tab Navigation - Glassmorphism */}
@@ -385,11 +403,10 @@ const CourseDetails = () => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`flex-1 py-3 px-4 font-medium rounded-xl transition-all duration-300 ${
-                      activeTab === tab
+                    className={`flex-1 py-3 px-4 font-medium rounded-xl transition-all duration-300 ${activeTab === tab
                         ? 'bg-white shadow-lg text-blue-600'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
-                    }`}
+                      }`}
                   >
                     {tab === 'overview' && 'Project Overview'}
                     {tab === 'instructor' && 'Instructor'}
@@ -466,13 +483,13 @@ const CourseDetails = () => {
                         <p className="text-gray-700 leading-relaxed mb-6">
                           {educatorData?.bio || 'No biography available for this instructor.'}
                         </p>
-                        
+
                         {educatorData?.expertise?.length > 0 && (
                           <div>
                             <h4 className="font-semibold text-gray-900 mb-3">Areas of Expertise:</h4>
                             <div className="flex flex-wrap gap-2">
                               {educatorData.expertise.map((skill, index) => (
-                                <span 
+                                <span
                                   key={index}
                                   className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium hover:shadow-md transition-shadow"
                                 >
