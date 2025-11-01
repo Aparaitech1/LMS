@@ -8,9 +8,9 @@ const connectCloudinary = async () => {
     });
 
 
-    console.log('CLOUDINARY_NAME:', process.env.CLOUDINARY_NAME);
+    // console.log('CLOUDINARY_NAME:', process.env.CLOUDINARY_NAME);
 
-    console.log('✅ Cloudinary connected successfully');
+    // console.log('✅ Cloudinary connected successfully');
 };
 
 export default connectCloudinary;

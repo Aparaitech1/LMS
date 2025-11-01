@@ -27,43 +27,43 @@ export const updateRoleToEducator = async (req, res) => {
 
 // Add New Course
 export const addCourse = async (req, res) => {
-  try {
-    const { courseData } = req.body;
-    const educatorId = req.auth.userId;
+    try {
+        const { courseData } = req.body;
+        const educatorId = req.auth.userId;
 
-    // Parse the incoming course data
-    const parsedCourseData = JSON.parse(courseData);
-    parsedCourseData.educator = educatorId;
+        // Parse the incoming course data
+        const parsedCourseData = JSON.parse(courseData);
+        parsedCourseData.educator = educatorId;
 
-    // Access uploaded files
-    const imageFile = req.files?.image?.[0];
-    const pdfFile = req.files?.pdf?.[0];
+        // Access uploaded files
+        const imageFile = req.files?.image?.[0];
+        const pdfFile = req.files?.pdf?.[0];
 
-    // Validate thumbnail
-    if (!imageFile) {
-      return res.json({ success: false, message: 'Thumbnail Not Attached' });
+        // Validate thumbnail
+        if (!imageFile) {
+            return res.json({ success: false, message: 'Thumbnail Not Attached' });
+        }
+
+        // Upload the course thumbnail to Cloudinary
+        const imageUpload = await cloudinary.uploader.upload(imageFile.path);
+        parsedCourseData.courseThumbnail = imageUpload.secure_url;
+
+        // Upload the PDF if provided
+        if (pdfFile) {
+            const pdfUpload = await cloudinary.uploader.upload(pdfFile.path, {
+                resource_type: 'raw',
+                folder: 'course_materials',
+            });
+            parsedCourseData.pdfUrl = pdfUpload.secure_url;
+        }
+
+        // Create the new course with uploaded URLs
+        const newCourse = await Course.create(parsedCourseData);
+
+        res.json({ success: true, message: 'Course Added', course: newCourse });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
     }
-
-    // Upload the course thumbnail to Cloudinary
-    const imageUpload = await cloudinary.uploader.upload(imageFile.path);
-    parsedCourseData.courseThumbnail = imageUpload.secure_url;
-
-    // Upload the PDF if provided
-    if (pdfFile) {
-      const pdfUpload = await cloudinary.uploader.upload(pdfFile.path, {
-        resource_type: 'raw',
-        folder: 'course_materials',
-      });
-      parsedCourseData.pdfUrl = pdfUpload.secure_url;
-    }
-
-    // Create the new course with uploaded URLs
-    const newCourse = await Course.create(parsedCourseData);
-
-    res.json({ success: true, message: 'Course Added', course: newCourse });
-  } catch (error) {
-    res.json({ success: false, message: error.message });
-  }
 };
 
 // Get Educator Courses
@@ -82,51 +82,76 @@ export const getEducatorCourses = async (req, res) => {
 }
 
 // Get Educator Dashboard Data ( Total Earning, Enrolled Students, No. of Courses)
+// Optimized Educator Dashboard
+// Improved educatorDashboardData controller
+// 🚀 Optimized Educator Dashboard Controller
 export const educatorDashboardData = async (req, res) => {
-    try {
-        const educator = req.auth.userId;
+  try {
+    const educator = req.auth.userId;
+    console.time("dashboard_total");
 
-        const courses = await Course.find({ educator });
+    // Step 1: Fetch only the necessary fields from educator's courses
+    console.time("courses_query");
+    const courses = await Course.find({ educator })
+      .select("courseTitle enrolledStudents")
+      .lean();
+    console.timeEnd("courses_query");
 
-        const totalCourses = courses.length;
-
-        const courseIds = courses.map(course => course._id);
-
-        // Calculate total earnings from purchases
-        const purchases = await Purchase.find({
-            courseId: { $in: courseIds },
-            status: 'completed'
-        });
-
-        const totalEarnings = purchases.reduce((sum, purchase) => sum + purchase.amount, 0);
-
-        // Collect unique enrolled student IDs with their course titles
-        const enrolledStudentsData = [];
-        for (const course of courses) {
-            const students = await User.find({
-                _id: { $in: course.enrolledStudents }
-            }, 'name imageUrl');
-
-            students.forEach(student => {
-                enrolledStudentsData.push({
-                    courseTitle: course.courseTitle,
-                    student
-                });
-            });
-        }
-
-        res.json({
-            success: true,
-            dashboardData: {
-                totalEarnings,
-                enrolledStudentsData,
-                totalCourses
-            }
-        });
-    } catch (error) {
-        res.json({ success: false, message: error.message });
+    if (courses.length === 0) {
+      return res.json({
+        success: true,
+        dashboardData: { totalEarnings: 0, totalCourses: 0, enrolledStudentsData: [] },
+      });
     }
+
+    // Step 2: Fetch purchases & compute total earnings in MongoDB itself
+    const courseIds = courses.map((c) => c._id);
+
+    console.time("aggregate_query");
+    const earnings = await Purchase.aggregate([
+      { $match: { courseId: { $in: courseIds }, status: "completed" } },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]);
+    console.timeEnd("aggregate_query");
+
+    const totalEarnings = earnings[0]?.total || 0;
+
+    // Step 3: Fetch only the 10 most recent enrolled students (not all)
+    console.time("students_query");
+    const recentPurchases = await Purchase.find({
+      courseId: { $in: courseIds },
+      status: "completed",
+    })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate("userId", "name imageUrl")
+      .populate("courseId", "courseTitle")
+      .lean();
+    console.timeEnd("students_query");
+
+    // Step 4: Map to frontend format
+    const enrolledStudentsData = recentPurchases.map((p) => ({
+      student: p.userId,
+      courseTitle: p.courseId.courseTitle,
+    }));
+
+    console.timeEnd("dashboard_total");
+
+    res.json({
+      success: true,
+      dashboardData: {
+        totalEarnings,
+        totalCourses: courses.length,
+        enrolledStudentsData,
+      },
+    });
+  } catch (error) {
+    console.error("Dashboard error:", error);
+    res.json({ success: false, message: error.message });
+  }
 };
+
+
 
 // Get Enrolled Students Data with Purchase Data
 export const getEnrolledStudentsData = async (req, res) => {

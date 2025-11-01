@@ -18,24 +18,16 @@ const CourseDetails = () => {
   const [pdfLoading, setPdfLoading] = useState(false);
 
   const fetchCourseData = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(`${backendUrl}/api/course/${courseId}`);
-      if (!data.success) throw new Error(data.message || 'Course not found');
-
-      setCourseData(data.courseData);
-
-      if (data.course?.educator?._id) {
-        const educatorRes = await axios.get(`${backendUrl}/api/educator/${data.course.educator._id}`);
-        setEducatorData(educatorRes.data.educator);
-      }
-    } catch (error) {
-      console.error('Error fetching course data:', error);
-      setCourseData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    const { data } = await axios.get(`${backendUrl}/api/course/${courseId}`);
+    if (data.success) setCourseData(data.courseData);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleEnroll = async () => {
     try {
