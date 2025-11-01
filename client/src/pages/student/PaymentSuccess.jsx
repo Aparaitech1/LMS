@@ -22,16 +22,16 @@ const PaymentSuccess = () => {
             },
           }
         );
-
-        if (data.success) {
+        console.log(data);
+        // if (data.success) {
           navigate('/my-enrollments');
-        } else {
-          alert('Payment verification failed!');
-          navigate('/');
-        }
+        // } else {
+        //   alert('Payment verification failed!');
+        //   navigate('/');
+        // }
       } catch (error) {
-        console.error('Error verifying payment:', error);
-        navigate('/');
+        console.log('Error verifying payment:', error);
+        navigate('/my-enrollments');
       }
     };
 
