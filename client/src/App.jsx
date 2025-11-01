@@ -18,6 +18,7 @@ import MyEnrollments from './pages/student/MyEnrollments'
 import Loading from './components/student/Loading'
 import PaymentSuccess from './pages/student/PaymentSuccess'
 
+
 const App = () => {
   const isEducatorRoute = useMatch('/educator/*');
 

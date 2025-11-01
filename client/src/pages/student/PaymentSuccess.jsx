@@ -1,9 +1,7 @@
-// src/pages/student/PaymentSuccess.jsx
 import React, { useEffect, useContext } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { AppContext } from '../../context/AppContext';
-import { toast } from 'react-toastify';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -13,26 +11,26 @@ const PaymentSuccess = () => {
   useEffect(() => {
     const verifyPayment = async () => {
       const courseId = searchParams.get('courseId');
-      if (!courseId) return navigate('/');
+      const token = await getToken();
 
       try {
-        const token = await getToken();
-
         const { data } = await axios.get(
           `${backendUrl}/api/user/payment-success?courseId=${courseId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         if (data.success) {
-          toast.success("Payment verified successfully!");
           navigate('/my-enrollments');
         } else {
-          toast.error('Payment verification failed.');
+          alert('Payment verification failed!');
           navigate('/');
         }
       } catch (error) {
-        console.error('Payment verification error:', error);
-        toast.error('Something went wrong during payment verification.');
+        console.error('Error verifying payment:', error);
         navigate('/');
       }
     };
